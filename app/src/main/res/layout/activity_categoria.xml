@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_categoria"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CategoriaActivity">
+
+    <TextView
+        android:id="@+id/idDescripcionCategoria"
+        android:layout_width="299dp"
+        android:layout_height="19dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/descripcionCategoria"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/idNombreNuevaCategoriaText"
+        app:layout_constraintTop_toBottomOf="@+id/idNombreNuevaCategoriaText"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/idNuevaCategoria"
+        android:layout_width="270dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="104dp"
+        android:layout_marginRight="104dp"
+        android:text="@string/msg_crear_nueva_categoria"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.106" />
+
+    <TextView
+        android:id="@+id/idNombreNuevaCategoria"
+        android:layout_width="194dp"
+        android:layout_height="28dp"
+        android:layout_marginTop="39dp"
+        android:text="@string/nombreNuevaCategoria"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/idNuevaCategoria"
+        app:layout_constraintTop_toBottomOf="@+id/idNuevaCategoria"
+        app:layout_constraintVertical_bias="0.001" />
+
+    <EditText
+        android:id="@+id/idNombreNuevaCategoriaText"
+        android:layout_width="330dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="28dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/nombreNuevaCategoria"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/idNombreNuevaCategoria"
+        app:layout_constraintTop_toBottomOf="@+id/idNombreNuevaCategoria"
+        app:layout_constraintVertical_bias="0.002" />
+
+    <EditText
+        android:id="@+id/idDescripcionCategoriaText"
+        android:layout_width="327dp"
+        android:layout_height="42dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/descripcionCategoria"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/idDescripcionCategoria"
+        app:layout_constraintTop_toBottomOf="@+id/idDescripcionCategoria"
+        app:layout_constraintVertical_bias="0.084" />
+
+    <Button
+        android:id="@+id/idOkNuevaCategoria"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="192dp"
+        android:text="@android:string/ok"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.406"
+        app:layout_constraintStart_toEndOf="@+id/idCancelNuevaCategoria"
+        app:layout_constraintTop_toBottomOf="@+id/idDescripcionCategoriaText" />
+
+    <Button
+        android:id="@+id/idCancelNuevaCategoria"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="192dp"
+        android:text="@android:string/cancel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.523"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/idDescripcionCategoriaText" />
+</androidx.constraintlayout.widget.ConstraintLayout>

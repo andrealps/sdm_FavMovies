@@ -1,0 +1,17 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--esta es la preferencia de categoría-->
+    <PreferenceCategory app:title="@string/categoria">
+        <!-- Este editText lo ponemos en comentarios porque en nuestro caso la preferencia es Categoría con sus valores-->
+
+        <!--esta key es la parte de la asociacón clave-valor que se guarda en la SharedPreferences-->
+        <ListPreference
+            app:defaultValue="true"
+            app:entries="@array/tipos_pelis_array"
+            app:entryValues="@array/tipos_pelis_array"
+            app:key="keyCategoria"
+            app:title="@string/categoria_titulo"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

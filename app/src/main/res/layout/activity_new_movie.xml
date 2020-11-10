@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutPrincipal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".NewMovie">
+
+    <EditText
+        android:id="@+id/idTituloTexto"
+        android:layout_width="326dp"
+        android:layout_height="38dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/tituloEdit"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/idTitulo"
+        app:layout_constraintTop_toBottomOf="@+id/idTitulo"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/idTitulo"
+        android:layout_width="231dp"
+        android:layout_height="26dp"
+        android:text="@string/titulo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.233"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.055" />
+
+    <TextView
+        android:id="@+id/idArgumento"
+        android:layout_width="328dp"
+        android:layout_height="27dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/argumento"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/idTituloTexto"
+        app:layout_constraintTop_toBottomOf="@+id/idTituloTexto"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <EditText
+        android:id="@+id/idSinopsis"
+        android:layout_width="328dp"
+        android:layout_height="114dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:gravity="start|top"
+        android:hint="@string/sinopsis"
+        android:inputType="textMultiLine"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/idArgumento"
+        app:layout_constraintTop_toBottomOf="@+id/idArgumento"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/idCategoria"
+        android:layout_width="325dp"
+        android:layout_height="34dp"
+        android:text="@string/categoria"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/idSinopsis"
+        app:layout_constraintTop_toBottomOf="@+id/idSinopsis"
+        app:layout_constraintVertical_bias="0.042" />
+
+    <Spinner
+        android:id="@+id/idSpinnerCategoria"
+        android:layout_width="231dp"
+        android:layout_height="49dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/idCategoria"
+        app:layout_constraintTop_toBottomOf="@+id/idCategoria"
+        app:layout_constraintVertical_bias="0.087" />
+
+    <Button
+        android:id="@+id/idBotonlapiz"
+        android:layout_width="54dp"
+        android:layout_height="51dp"
+        android:layout_marginTop="15dp"
+        android:visibility="visible"
+        app:backgroundTint="@color/purple_500"
+        app:icon="@android:drawable/ic_menu_edit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.278"
+        app:layout_constraintStart_toEndOf="@+id/idSpinnerCategoria"
+        app:layout_constraintTop_toBottomOf="@+id/idCategoria"
+        app:layout_constraintVertical_bias="0.039" />
+
+    <TextView
+        android:id="@+id/idDuracion"
+        android:layout_width="228dp"
+        android:layout_height="37dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/duracion"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/idSpinnerCategoria"
+        app:layout_constraintTop_toBottomOf="@+id/idSpinnerCategoria"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <EditText
+        android:id="@+id/idDuracionTexto"
+        android:layout_width="236dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="11dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/duracionTexto"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/idDuracion"
+        app:layout_constraintTop_toBottomOf="@+id/idDuracion"
+        app:layout_constraintVertical_bias="0.12" />
+
+    <EditText
+        android:id="@+id/idFecha"
+        android:layout_width="235dp"
+        android:layout_height="39dp"
+        android:layout_marginTop="34dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/fecha"
+        android:inputType="date"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/idDuracionTexto"
+        app:layout_constraintTop_toBottomOf="@+id/idDuracionTexto"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/idGuardar"
+        android:layout_width="112dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="80dp"
+        android:text="@string/guardar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/idFecha"
+        app:layout_constraintTop_toBottomOf="@+id/idFecha"
+        app:layout_constraintVertical_bias="0.491" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
