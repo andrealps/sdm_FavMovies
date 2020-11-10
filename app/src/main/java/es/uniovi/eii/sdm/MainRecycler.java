@@ -2,9 +2,9 @@ package es.uniovi.eii.sdm;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,6 +15,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,7 +23,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -32,13 +32,24 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import es.uniovi.eii.sdm.datos.ActoresDataSource;
-import es.uniovi.eii.sdm.datos.PeliculasDataSource;
-import es.uniovi.eii.sdm.datos.RepartoPeliculaDataSource;
+import es.uniovi.eii.sdm.datos.db.ActoresDataSource;
+import es.uniovi.eii.sdm.datos.db.PeliculasDataSource;
+import es.uniovi.eii.sdm.datos.db.RepartoPeliculaDataSource;
+import es.uniovi.eii.sdm.datos.server.ServerDataMapper;
+import es.uniovi.eii.sdm.datos.server.movielist.MovieData;
+import es.uniovi.eii.sdm.datos.server.movielist.MovieListResult;
 import es.uniovi.eii.sdm.modelo.Actor;
 import es.uniovi.eii.sdm.modelo.Categoria;
 import es.uniovi.eii.sdm.modelo.Pelicula;
 import es.uniovi.eii.sdm.modelo.RepartoPelicula;
+import es.uniovi.eii.sdm.remote.ApiUtils;
+import es.uniovi.eii.sdm.remote.ThemoviedbApi;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static es.uniovi.eii.sdm.remote.ApiUtils.API_KEY;
+import static es.uniovi.eii.sdm.remote.ApiUtils.LANGUAGE;
 
 public class MainRecycler extends AppCompatActivity {
     public static final String PELICULA_SELECCIONADA = "peli_seleccionada";
@@ -59,6 +70,12 @@ public class MainRecycler extends AppCompatActivity {
     NotificationCompat.Builder mBuilder;
     NotificationManager mNotificationManager;
 
+    // SharedPreference de la MainRecycler, para filtrar por categoría
+    SharedPreferences sharedPreferencesMainRecycler;
+
+    // API, comunicación
+    private ThemoviedbApi clienteThemoviedbApi;
+
     private boolean primeraEjecucion = true;
 
     @Override
@@ -66,20 +83,71 @@ public class MainRecycler extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_recycler);
 
-        // Se lanza la notificación pero no se activa hasta que no se le indique al Builder
-        // Esto será dentro de la tarea asíncrona
-        ConstruirNotificacion(getString(R.string.app_name), "Cargada la base de datos");
+        listaPeliView = findViewById(R.id.recyclerView);
+        listaPeliView.setHasFixedSize(true);
 
-        DownloadFilesTask task = new DownloadFilesTask();
-        task.execute();
+        // Recuperación de datos del servicio
+        clienteThemoviedbApi = ApiUtils.creaThemoviedbApi();
+        // Recuperar datos para mostrarlos
+        realizarPelicionPeliculasPopulares(clienteThemoviedbApi);
     }
 
- /*   // click del item del adapter
-    private void clickOnItem(Pelicula peli) {
-        Intent intent = new Intent(MainRecycler.this, MainActivity.class);
-        intent.putExtra(PELICULA_SELECCIONADA, peli);
-        startActivity(intent);
-    }*/
+    // Comprobará las películas con el filtro
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Pensado para volver del SettingsActivity con el filtro
+        if (!primeraEjecucion)
+            cargarView();
+    }
+
+    /**
+     * Reliza una petición a la API: lista de películas populares
+     * De forma asíncrona y procesa el resultado
+     * @param clienteThemoviedbApi
+     */
+    private void realizarPelicionPeliculasPopulares(ThemoviedbApi clienteThemoviedbApi) {
+        // Hacemos una llamada que nos devuelva MovieListResult
+        Call<MovieListResult> call = clienteThemoviedbApi.getListMovies("popular", API_KEY, LANGUAGE, 1);
+        // Petición asíncrona a la API
+        call.enqueue(new Callback<MovieListResult>() {
+            // Respuesta a la llamada
+            @Override
+            public void onResponse(Call<MovieListResult> call, Response<MovieListResult> response) {
+                switch (response.code()){
+                    // Llamada correcta
+                    case 200:
+                        MovieListResult data = response.body();
+                        List<MovieData> listDatosPeliculas = data.getResults();  // getMovieData
+                        Log.d("Petición PelPopular", "ListaDatosPeliculas: " + listDatosPeliculas);
+                        // convierte desde los objetos de data a los objetos modelo MovieData --> Pelicula
+                        listaPeli= ServerDataMapper.convertMovieListToDomain(listDatosPeliculas);
+
+                        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+                        listaPeliView.setLayoutManager(layoutManager);
+
+                        // Instanciamos el adapter con los datos de la petición y lo asignamos a RecyclerView
+                        // Generar el adaptador, le pasamos la lista de usuarios
+                        // y el manejador para el evento click sobre un elemento
+                        ListaPeliculaAdapter lpAdapter = new ListaPeliculaAdapter(listaPeli,
+                                peli -> clickOnItem(peli));
+                        /*Le coloco el adapter*/
+                        listaPeliView.setAdapter(lpAdapter);
+
+                        break;
+                    default:
+                        call.cancel();
+                        break;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MovieListResult> call, Throwable t) {
+                Log.e("Lista - error", t.toString());
+            }
+        });
+    }
 
     public void clickOnItem(Pelicula peli) {
         Intent intent = new Intent(MainRecycler.this, ShowMovie.class);
@@ -118,16 +186,6 @@ public class MainRecycler extends AppCompatActivity {
         }
     }
 
-    // Comprobará las películas con el filtro
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        // Pensado para volver del SettingsActivity con el filtro
-        if (!primeraEjecucion)
-            cargarView();
-    }
-
     // Gestión del menu de Settings
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -154,8 +212,9 @@ public class MainRecycler extends AppCompatActivity {
 
      // Mismo contenido que antiguo onResume
     protected void cargarView() {
-        listaPeliView = (RecyclerView) findViewById(R.id.recyclerView);
-        listaPeliView.setHasFixedSize(true);
+        // Obtenemos SharedPreference para aplicar el filtro establecido
+        sharedPreferencesMainRecycler = PreferenceManager.getDefaultSharedPreferences(this);
+        filtroCategoria = sharedPreferencesMainRecycler.getString("keyCategoria", "");
 
         // Obtenemos la lista de películas de la DB
         PeliculasDataSource peliculasDataSource = new PeliculasDataSource(getApplicationContext());
@@ -166,6 +225,10 @@ public class MainRecycler extends AppCompatActivity {
             // Cargo las películas en la lista que cumplen con el filtro
             listaPeli = peliculasDataSource.getFilteredValorations(filtroCategoria);
         peliculasDataSource.close();
+
+        // Obtenemos los elementos de la vista
+        listaPeliView = findViewById(R.id.recyclerView);
+        listaPeliView.setHasFixedSize(true);
 
         // Con la lista de películas iniciamos el RecyclerView
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());

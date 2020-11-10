@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,11 +24,21 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import es.uniovi.eii.sdm.datos.server.ServerDataMapper;
+import es.uniovi.eii.sdm.datos.server.moviedetail.MovieDetail;
 import es.uniovi.eii.sdm.modelo.Pelicula;
+import es.uniovi.eii.sdm.remote.ApiUtils;
+import es.uniovi.eii.sdm.remote.ThemoviedbApi;
 import es.uniovi.eii.sdm.ui.ActorFragment;
 import es.uniovi.eii.sdm.ui.ArgumentoFragment;
 import es.uniovi.eii.sdm.ui.InfoFragment;
 import es.uniovi.eii.sdm.util.Conexion;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static es.uniovi.eii.sdm.remote.ApiUtils.API_KEY;
+import static es.uniovi.eii.sdm.remote.ApiUtils.LANGUAGE;
 
 public class ShowMovie extends AppCompatActivity {
     private Pelicula pelicula;
@@ -40,6 +51,9 @@ public class ShowMovie extends AppCompatActivity {
     TextView argumento;
     ImageView caratula;
 
+    // API, comunicación
+    private ThemoviedbApi clienteThemoviedbApi;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +62,11 @@ public class ShowMovie extends AppCompatActivity {
         // Recepción datos como activity secundaria
         Intent intentPeli = getIntent();
         pelicula = intentPeli.getParcelableExtra(MainRecycler.PELICULA_SELECCIONADA);
+
+        // Recuperación de datos del servicio
+        clienteThemoviedbApi = ApiUtils.creaThemoviedbApi();
+        // Realizamos la petición de detalles de la película
+        realizarPeticionDetallesPelicula(clienteThemoviedbApi, pelicula.getId());
 
         // Gestion barra de la app
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -79,6 +98,46 @@ public class ShowMovie extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(v -> verTrailer(pelicula.getUrlTrailer()));
     }
+
+    /**
+     * Realiza una petición a la API: detalles de una película
+     * de forma asíncrona y procesa el resultado
+     * @param clienteThemoviedbApi
+     * @param idPelicula
+     */
+    private void realizarPeticionDetallesPelicula(ThemoviedbApi clienteThemoviedbApi, int idPelicula) {
+        Call<MovieDetail> call=
+                clienteThemoviedbApi.getMovieDetail(idPelicula,API_KEY,LANGUAGE,"videos");
+
+        // Petición asíncrona a la API
+        call.enqueue(new Callback<MovieDetail>() {
+            @Override
+            public void onResponse(Call<MovieDetail> call, Response<MovieDetail> response) {
+                switch (response.code()) {
+                    case 200:
+                        MovieDetail data= response.body();
+
+                        // convierte desde los objetos de data a los objetos modelo MovieDetail --> Pelicula
+                        ServerDataMapper.convertMovieDetailToDomain(data, pelicula);
+
+                        // ya tenemos todos los datos --> los mostramos
+                        mostrarDatos(pelicula);
+
+                        break;
+                    default:
+                        call.cancel();
+                        break;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MovieDetail> call, Throwable t) {
+                Log.e("Lista - error", t.toString());
+            }
+
+        });
+    }
+
 
     // Abre una Activy con Youtube y muestra el vídeo indicado en el parámetro
     private void verTrailer(String urlTrailer) {

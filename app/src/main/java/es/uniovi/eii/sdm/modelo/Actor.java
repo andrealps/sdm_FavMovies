@@ -21,7 +21,6 @@ public class Actor implements Parcelable {
     public Actor(int id, String nombre_actor, String imagen, String urlImdb) {
         this.id = id;
         this.nombre_actor = nombre_actor;
-        //this.nombre_personaje = nombre_personje;
         this.imagen = imagen;
         this.urlImdb = urlImdb;
     }

@@ -43,12 +43,5 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        // Cogemos la opción seleccionada por el usuario en Settings
-        name = sharedPreferences.getString("keyCategoria", "");
-        Log.i("Categoria", name);
-
-        MainRecycler.filtroCategoria = name;
     }
 }

@@ -1,4 +1,4 @@
-package es.uniovi.eii.sdm.datos;
+package es.uniovi.eii.sdm.datos.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

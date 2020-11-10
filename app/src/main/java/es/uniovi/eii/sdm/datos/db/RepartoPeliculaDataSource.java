@@ -1,4 +1,4 @@
-package es.uniovi.eii.sdm.datos;
+package es.uniovi.eii.sdm.datos.db;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-import es.uniovi.eii.sdm.modelo.Actor;
 import es.uniovi.eii.sdm.modelo.RepartoPelicula;
 
 import java.util.ArrayList;

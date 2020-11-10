@@ -66,9 +66,10 @@
     <string name="title_info">INFORMACIÓN</string>
     <string name="title_Actores">ACTORES</string>
     <string name="title_argumento">ARGUMENTO</string>
-    <string name="categoria_titulo">Elije la pelicula</string>
+    <string name="categoria_titulo">Elije la categoría</string>
     <string name="imagen_actor">Imagen del actor en cuestión</string>
     <string name="nombre_actor">Nombre del actor</string>
     <string name="nombre_personaje">Nombre del personaje del actor</string>
+    <string name="msg_prox_mas_info">Próximamente se mostrará más información</string>
 
 </resources>
