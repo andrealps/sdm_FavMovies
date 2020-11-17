@@ -109,4 +109,8 @@ public class MyDBHelper extends SQLiteOpenHelper {
         db.execSQL(DATABASE_DROP_REPARTO);
         this.onCreate(db);
     }
+
+    public void borrarBd() {
+
+    }
 }

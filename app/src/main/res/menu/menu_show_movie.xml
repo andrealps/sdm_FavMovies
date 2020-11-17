@@ -8,11 +8,9 @@
         android:title="@string/menu_item_compartir"
         app:showAsAction="ifRoom" />
 
-    <!--
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
-     -->
+        android:id="@+id/favorito"
+        android:icon="@drawable/twitter_like"
+        android:title="@string/menu_item_favorito"
+        app:showAsAction="ifRoom" />
 </menu>

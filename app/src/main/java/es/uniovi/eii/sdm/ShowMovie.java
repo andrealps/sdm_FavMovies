@@ -24,6 +24,9 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.util.List;
+
+import es.uniovi.eii.sdm.datos.db.PeliculasDataSource;
 import es.uniovi.eii.sdm.datos.server.ServerDataMapper;
 import es.uniovi.eii.sdm.datos.server.moviedetail.MovieDetail;
 import es.uniovi.eii.sdm.modelo.Pelicula;
@@ -41,8 +44,6 @@ import static es.uniovi.eii.sdm.remote.ApiUtils.API_KEY;
 import static es.uniovi.eii.sdm.remote.ApiUtils.LANGUAGE;
 
 public class ShowMovie extends AppCompatActivity {
-    private Pelicula pelicula;
-
     CollapsingToolbarLayout toolbarLayout;
     ImageView imagenFondo;
     TextView categoria;
@@ -53,6 +54,11 @@ public class ShowMovie extends AppCompatActivity {
 
     // API, comunicación
     private ThemoviedbApi clienteThemoviedbApi;
+
+    private Pelicula pelicula;
+    // Nuevas variables para películas favoritas
+    private boolean esFavorita = false;
+    private List<Pelicula> listaPelisFavoritas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +73,9 @@ public class ShowMovie extends AppCompatActivity {
         clienteThemoviedbApi = ApiUtils.creaThemoviedbApi();
         // Realizamos la petición de detalles de la película
         realizarPeticionDetallesPelicula(clienteThemoviedbApi, pelicula.getId());
+
+        // Recuperación de datos de la BD
+        recuperarPeliculasFavoritasDb();
 
         // Gestion barra de la app
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -100,14 +109,30 @@ public class ShowMovie extends AppCompatActivity {
     }
 
     /**
+     * Recupera todas las películas de la tabla películas (favoritas) de la BD y las carga en
+     * la lista: listaPelisFavoritas
+     */
+    private void recuperarPeliculasFavoritasDb() {
+        PeliculasDataSource peliculasDataSource = new PeliculasDataSource(getApplicationContext());
+        // Abrir
+        peliculasDataSource.open();
+        listaPelisFavoritas = peliculasDataSource.getAllValorations();
+
+        Log.d("BD recupera favoritas", "listaPelisFavoritas: " + listaPelisFavoritas);
+        // Cerrar
+        peliculasDataSource.close();
+    }
+
+    /**
      * Realiza una petición a la API: detalles de una película
      * de forma asíncrona y procesa el resultado
-     * @param clienteThemoviedbApi
-     * @param idPelicula
+     *
+     * @param clienteThemoviedbApi api
+     * @param idPelicula           id de la película
      */
     private void realizarPeticionDetallesPelicula(ThemoviedbApi clienteThemoviedbApi, int idPelicula) {
-        Call<MovieDetail> call=
-                clienteThemoviedbApi.getMovieDetail(idPelicula,API_KEY,LANGUAGE,"videos");
+        Call<MovieDetail> call =
+                clienteThemoviedbApi.getMovieDetail(idPelicula, API_KEY, LANGUAGE, "videos");
 
         // Petición asíncrona a la API
         call.enqueue(new Callback<MovieDetail>() {
@@ -115,7 +140,7 @@ public class ShowMovie extends AppCompatActivity {
             public void onResponse(Call<MovieDetail> call, Response<MovieDetail> response) {
                 switch (response.code()) {
                     case 200:
-                        MovieDetail data= response.body();
+                        MovieDetail data = response.body();
 
                         // convierte desde los objetos de data a los objetos modelo MovieDetail --> Pelicula
                         ServerDataMapper.convertMovieDetailToDomain(data, pelicula);
@@ -181,22 +206,38 @@ public class ShowMovie extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        // para el menú antes
-        /*
-        if (id == R.id.action_settings) {
-            return true;
-        }
-         */
-
-        if (id == R.id.compartir) {
-            Conexion conexion = new Conexion(getApplicationContext());
-            if (conexion.CompruebaConexion()) {
-                compartirPeli();
-            } else
-                Toast.makeText(getApplicationContext(), R.string.error_conexion, Toast.LENGTH_LONG).show();
+        switch (id) {
+            case R.id.compartir: {
+                Conexion conexion = new Conexion(getApplicationContext());
+                if (conexion.CompruebaConexion()) {
+                    compartirPeli();
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.error_conexion, Toast.LENGTH_LONG).show();
+                }
+                break;
+            }
+            case R.id.favorito: {
+                // Si no está en favoritos la añadimos
+                if (!esFavorita){
+                    listaPelisFavoritas.add(pelicula);
+                    insertarPeliculaFavBd(pelicula);
+                }
+                break;
+            }
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Insertamos la película en la tabla de películas favoritas
+     * @param pelicula
+     */
+    private void insertarPeliculaFavBd(Pelicula pelicula) {
+        PeliculasDataSource peliculasDataSource = new PeliculasDataSource(getApplicationContext());
+        peliculasDataSource.open();
+        peliculasDataSource.createpelicula(pelicula);
+        peliculasDataSource.close();
     }
 
     /**
