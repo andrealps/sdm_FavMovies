@@ -111,6 +111,8 @@ public class MyDBHelper extends SQLiteOpenHelper {
     }
 
     public void borrarBd() {
-
+        SQLiteDatabase database = getWritableDatabase();
+        database.delete(TABLA_PELICULAS, null, null);
+        close();
     }
 }

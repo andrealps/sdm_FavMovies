@@ -20,12 +20,12 @@ public class CategoriaActivity extends AppCompatActivity {
 
         // Recepción de los datos
         Intent intent = getIntent();
-        int posCategoria = intent.getIntExtra(MainActivity.POS_CATEGORIA_SELECCIONADA, 0);
+        int posCategoria = intent.getIntExtra(MainActivityAntigua.POS_CATEGORIA_SELECCIONADA, 0);
         Categoria categEntrada = null;
 
         // Si se ha elegido alguna categoría
         if (posCategoria > 0)
-            categEntrada = intent.getParcelableExtra(MainActivity.CATEGORIA_SELECCIONADA);
+            categEntrada = intent.getParcelableExtra(MainActivityAntigua.CATEGORIA_SELECCIONADA);
 
         TextView textViewCrea = (TextView) findViewById(R.id.idNuevaCategoria);
         final EditText editNomCategoria = (EditText) findViewById(R.id.idNombreNuevaCategoriaText);
@@ -54,7 +54,7 @@ public class CategoriaActivity extends AppCompatActivity {
                 Categoria categSalida = new Categoria(editNomCategoria.getText().toString(),
                         editDescripcion.getText().toString());
                 Intent intentResultado = new Intent();
-                intentResultado.putExtra(MainActivity.CATEGORIA_MODIFICADA, categSalida);
+                intentResultado.putExtra(MainActivityAntigua.CATEGORIA_MODIFICADA, categSalida);
                 setResult(RESULT_OK, intentResultado);
                 finish();
             }

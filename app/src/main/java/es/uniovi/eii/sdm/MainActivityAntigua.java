@@ -21,7 +21,7 @@ import java.util.List;
 import es.uniovi.eii.sdm.modelo.Categoria;
 import es.uniovi.eii.sdm.modelo.Pelicula;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivityAntigua extends AppCompatActivity {
     // Identifiadores de Intents
     public static final String POS_CATEGORIA_SELECCIONADA = "pos_categoria_seleccionada";
     public static final String CATEGORIA_SELECCIONADA = "categoria_seleccionada";
@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Redirige a la nueva activity CategoriaActivity para modificar la categoría
     private void modificarCategoria() {
-        Intent categoriaIntent = new Intent(MainActivity.this, CategoriaActivity.class);
+        Intent categoriaIntent = new Intent(MainActivityAntigua.this, CategoriaActivity.class);
         // Paso de datos
         categoriaIntent.putExtra(POS_CATEGORIA_SELECCIONADA, spinnerCategoria.getSelectedItemPosition());
         creandoCategoria = true;
